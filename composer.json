@@ -12,6 +12,7 @@
         "components/jquery": "3.3.1",
         "datatables/datatables": "1.10.19",
         "fideloper/proxy": "^4.0",
+        "fortawesome/font-awesome": "5.8.1",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
         "twbs/bootstrap": "4.3.1"
