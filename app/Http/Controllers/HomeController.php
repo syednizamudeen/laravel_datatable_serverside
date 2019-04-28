@@ -23,7 +23,6 @@ class HomeController extends Controller
                 }, array_column(home::$dataTableColumnMapping, 'database')
             ))
         );
-        // error_log(print_r(array_search('name', array_column(json_decode($data['columns'], true), 'data')),1));
         return view('home.index')->with($data);
     }
 
@@ -114,6 +113,7 @@ class HomeController extends Controller
 class DataTable
 {
     private $query;
+    private $filterQuery;
     private $requestParam;
     private $recordSet;
     private $recordsTotal;
@@ -134,10 +134,14 @@ class DataTable
         $this->columnMapping = $className::$dataTableColumnMapping;
         $this->limit();
         $this->query = $className::limit($this->limit)->offset($this->offset);
+        $this->filterQuery = $className;
         $this->order();
+        $this->filter();
         $this->recordSet = $this->query->get();
         $this->recordsTotal = $className::count();
         $this->recordsFiltered = $className::count();
+        // error_log(print_r($this->filterQuery::count(), 1));
+        // error_log(print_r($className::where('address','LIKE', '%koby%')->count(), 1));
     }
 
     /**
@@ -173,8 +177,6 @@ class DataTable
      */
     private function order()
     {
-        // error_log(print_r($this->requestParam->order, 1));
-        // error_log(print_r(array_column($this->columnMapping, 'database'), 1));
         $mapping = array_column($this->columnMapping, 'database');
         $order = array_map(function($n) use($mapping) {
             if (array_key_exists($n['column'], $mapping))
@@ -186,7 +188,6 @@ class DataTable
                 return $n;
             }
         }, $this->requestParam->order);
-        // error_log(print_r($order, 1));
         foreach ($order as $k)
         {
             $this->query->orderBy($k['column'], $k['dir']);
@@ -199,7 +200,28 @@ class DataTable
      * @return void
      */
     private function filter()
-    {
-
+    {       
+        // $useOr = false;
+        foreach($this->requestParam->columns as $k => $v)
+        {
+            if ($v['searchable'] == true && $v['search']['value'] != '')
+            {
+                $this->query->where($v['data'], 'LIKE', '%' . $v['search']['value'] . '%');
+                // if ($useOr)
+                // {
+                //     $this->filterQuery->where($v['data'], 'LIKE', '%' . $v['search']['value'] . '%');
+                // }
+                // else
+                // {
+                //     $this->filterQuery::where($v['data'], 'LIKE', '%' . $v['search']['value'] . '%');
+                // }
+                // $useOr = true;
+            }
+        }
+        // if ($useOr)
+        // {
+        //     error_log($this->filterQuery->count());
+        // }
+        // error_log(print_r($this->filterQuery::where('address','LIKE', '%koby%')->where('annualincome','LIKE', '%83829%')->count(), 1));
     }
 }
