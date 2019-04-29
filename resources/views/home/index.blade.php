@@ -35,20 +35,6 @@
                             @endforeach
                         </tr>
                     </thead>
-                    {{-- <tbody>
-                    @foreach($staffs as $staff)
-                        <tr>
-                            <td>{{$staff->id}}</td>
-                            <td>{{$staff->name}}</td>
-                            <td>{{$staff->address}}</td>
-                            <td>{{$staff->contactno}}</td>
-                            <td>{{$staff->annualincome}}</td>
-                            <td>{{$staff->age}}</td>
-                            <td>{{$staff->created_at}}</td>
-                            <td>{{$staff->updated_at}}</td>
-                        </tr>
-                    @endforeach                    
-                    </tbody> --}}
                 </table>
             </div>
         </div>
@@ -57,6 +43,7 @@
     <script src="{{asset('vendor/datatables/js/jquery.dataTables.min.js')}}"></script>
     <script src="{{asset('vendor/datatables/js/dataTables.bootstrap4.min.js')}}"></script>
     <script src="{{asset('vendor/bootstrap/dist/js/bootstrap.min.js')}}"></script>
+    <script src="{{asset('vendor/moment/moment.min.js')}}"></script>
     <script>
     var APP_URL = {!! json_encode(url('/')) !!}, dataTable, columns = {!! $columns !!}, name = {!! array_search('name', array_column(json_decode($columns, true), 'data')) !!}, income = {!! array_search('annualincome', array_column(json_decode($columns, true), 'data')) !!}, age = {!! array_search('age', array_column(json_decode($columns, true), 'data')) !!}, created_at = {!! array_search('created_at', array_column(json_decode($columns, true), 'data')) !!}, updated_at = {!! array_search('updated_at', array_column(json_decode($columns, true), 'data')) !!};
     $(document).ready(function() {
@@ -79,10 +66,8 @@
                 },
                 {
                     "targets": [created_at, updated_at],
-                    "className": 'text-center',
                     "render": function ( data, type, row, meta ) {
-                        console.log(data);
-                        return data;
+                        return moment(data).format("Do MMM YYYY h:mm a");
                     }
                 }
             ]
