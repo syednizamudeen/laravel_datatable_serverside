@@ -58,15 +58,34 @@
     <script src="{{asset('vendor/datatables/js/dataTables.bootstrap4.min.js')}}"></script>
     <script src="{{asset('vendor/bootstrap/dist/js/bootstrap.min.js')}}"></script>
     <script>
-    var APP_URL = {!! json_encode(url('/')) !!}, dataTable, columns = {!! $columns !!}, name = {!! array_search('name', array_column(json_decode($columns, true), 'data')) !!};
+    var APP_URL = {!! json_encode(url('/')) !!}, dataTable, columns = {!! $columns !!}, name = {!! array_search('name', array_column(json_decode($columns, true), 'data')) !!}, income = {!! array_search('annualincome', array_column(json_decode($columns, true), 'data')) !!}, age = {!! array_search('age', array_column(json_decode($columns, true), 'data')) !!}, created_at = {!! array_search('created_at', array_column(json_decode($columns, true), 'data')) !!}, updated_at = {!! array_search('updated_at', array_column(json_decode($columns, true), 'data')) !!};
     $(document).ready(function() {
         dataTable = $('#example').DataTable({
             "processing": true,
             "serverSide": true,
-            orderCellsTop: true,
+            "orderCellsTop": true,
             "ajax": APP_URL+"/home/datatable",
             "columns": columns,
-            "order": [[ name, "asc" ]]
+            "order": [[ name, "asc" ]],
+            "columnDefs": [
+                {
+                    "targets": income,
+                    "className": 'text-right',
+                    "render": $.fn.dataTable.render.number( ',', '.', 2, '$' )
+                },
+                {
+                    "targets": age,
+                    "className": 'text-center'
+                },
+                {
+                    "targets": [created_at, updated_at],
+                    "className": 'text-center',
+                    "render": function ( data, type, row, meta ) {
+                        console.log(data);
+                        return data;
+                    }
+                }
+            ]
         });
         $.each($('.input-filter', '#example tr'), function(i) {
             var column = dataTable.columns($(this).index());
