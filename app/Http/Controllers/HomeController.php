@@ -100,12 +100,7 @@ class HomeController extends Controller
      */
     public function datatable(Request $request)
     {
-        // error_log($request);
-        // error_log($request->search);
-        // error_log($request->order);
-        // error_log($request->columns);
-        // error_log(print_r($request->toArray(),1));
-        $dt = new DataTable(home::class, $request);
+        $dt = new DataTable(new home, $request);
         return response()->json($dt->get());
     }
 }
@@ -121,6 +116,7 @@ class DataTable
     private $limit;
     private $offset;
     private $columnMapping;
+    private $isQueryBind;
 
     /**
      * Constructor
@@ -132,16 +128,15 @@ class DataTable
     {
         $this->requestParam = $requestParam;
         $this->columnMapping = $className::$dataTableColumnMapping;
-        $this->limit();
-        $this->query = $className::limit($this->limit)->offset($this->offset);
-        $this->filterQuery = $className;
-        $this->order();
+        $this->isQueryBind = false;
+        $this->query = $className;
+
         $this->filter();
+        $this->order();
+        $this->recordsFiltered = $this->query->count();
+        $this->limit();  
         $this->recordSet = $this->query->get();
         $this->recordsTotal = $className::count();
-        $this->recordsFiltered = $className::count();
-        // error_log(print_r($this->filterQuery::count(), 1));
-        // error_log(print_r($className::where('address','LIKE', '%koby%')->count(), 1));
     }
 
     /**
@@ -152,7 +147,7 @@ class DataTable
     function get()
     {
         return [
-            'draw' => $this->requestParam->draw,
+            'draw' => isset($this->requestParam->draw) ? $this->requestParam->draw : 0,
             'recordsTotal' => $this->recordsTotal,
             'recordsFiltered' => $this->recordsFiltered,
             'data' => $this->recordSet->toArray()
@@ -166,8 +161,16 @@ class DataTable
      */
     private function limit()
     {
-        $this->limit = isset($this->requestParam->length) && $this->requestParam->length != -1 ? (int)$this->requestParam->length : 10;
         $this->offset = isset($this->requestParam->start) ? (int)$this->requestParam->start : 0;
+        $this->limit = isset($this->requestParam->length) && $this->requestParam->length != -1 ? (int)$this->requestParam->length : 10;        
+        if ($this->isQueryBind)
+        {
+            $this->query->limit($this->limit)->offset($this->offset);
+        }
+        else
+        {
+            $this->query = $this->query->limit($this->limit)->offset($this->offset);
+        }
     }
 
     /**
@@ -190,7 +193,15 @@ class DataTable
         }, $this->requestParam->order);
         foreach ($order as $k)
         {
-            $this->query->orderBy($k['column'], $k['dir']);
+            if ($this->isQueryBind)
+            {
+                $this->query->orderBy($k['column'], $k['dir']);
+            }
+            else
+            {
+                $this->query = $this->query->orderBy($k['column'], $k['dir']);
+                $this->isQueryBind = true;
+            }
         }
     }
 
@@ -200,28 +211,22 @@ class DataTable
      * @return void
      */
     private function filter()
-    {       
-        // $useOr = false;
+    {
         foreach($this->requestParam->columns as $k => $v)
         {
             if ($v['searchable'] == true && $v['search']['value'] != '')
             {
                 $this->query->where($v['data'], 'LIKE', '%' . $v['search']['value'] . '%');
-                // if ($useOr)
-                // {
-                //     $this->filterQuery->where($v['data'], 'LIKE', '%' . $v['search']['value'] . '%');
-                // }
-                // else
-                // {
-                //     $this->filterQuery::where($v['data'], 'LIKE', '%' . $v['search']['value'] . '%');
-                // }
-                // $useOr = true;
+                if ($this->isQueryBind)
+                {
+                    $this->query->where($v['data'], 'LIKE', '%' . $v['search']['value'] . '%');
+                }
+                else
+                {
+                    $this->query = $this->query::where($v['data'], 'LIKE', '%' . $v['search']['value'] . '%');
+                    $this->isQueryBind = true;
+                }
             }
         }
-        // if ($useOr)
-        // {
-        //     error_log($this->filterQuery->count());
-        // }
-        // error_log(print_r($this->filterQuery::where('address','LIKE', '%koby%')->where('annualincome','LIKE', '%83829%')->count(), 1));
     }
 }
