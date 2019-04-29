@@ -25,7 +25,7 @@
                         <tr>
                             @foreach($columnmapping as $column)
                             <th class="input-filter">
-                                <div class="input-group input-group-sm mb-3">
+                                <div class="input-group input-group-sm">
                                     <input type="{{$column['type']}}" class="form-control" placeholder="Search {{$column['label']}}">
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-secondary clearfilter" type="button"><i class="fas fa-times-circle"></i></button>
