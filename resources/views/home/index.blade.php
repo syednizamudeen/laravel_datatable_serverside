@@ -87,22 +87,29 @@
             "ajax": APP_URL+"/home/datatable",
             "columns": columns,
             "order": [[ name, "asc" ]],
-            "buttons": [
-                {
-                    extend:    'colvis',
-                    text:      '<i class="fa fa-columns fa-lg fa-fw text-primary"></i>Columns',
-                    titleAttr: 'Show/Hide Column(s)',
-                    className: 'btn btn-sm',
-                    autoClose: true,
-                    columns: ':not(.disableColhide)',
+            "buttons": {
+                dom: {
+                    button: {
+                        tag: 'button',
+                        className: 'btn btn-sm'
+                    }
                 },
-                {
-                    extend:    'pageLength',
-                    titleAttr: 'Rows per Page',
-                    className: 'btn btn-primary btn-sm',
-                    autoClose: true,
-                }
-            ],
+                buttons: [
+                    {
+                        extend:    'colvis',
+                        text:      '<i class="fa fa-columns fa-lg fa-fw text-white"></i>Columns',
+                        titleAttr: 'Show/Hide Column(s)',
+                        className: 'btn-primary',
+                        autoClose: true,
+                    },
+                    {
+                        extend:    'pageLength',
+                        titleAttr: 'Rows per Page',
+                        className: 'btn-primary',
+                        autoClose: true,
+                    }
+                ]
+            },
             "columnDefs": [
                 {
                     "targets": income,
@@ -119,9 +126,14 @@
                         return moment(data).format("Do MMM YYYY h:mm a");
                     }
                 }
-            ]
+            ],
+            "initComplete": function(settings, json) {
+                $.each($('th', '#example tr:first'), function(i) {
+                    $(this).css("border-top", "unset");
+                });
+            }
         });
-        $("div.boxtitle").html('<h3 class="box-title">{{$heading}}</h3>');
+        $("div.boxtitle").html('<h4 class="m-0">{{$heading}}</h4>');
         $.each($('.input-filter', '#example tr'), function(i) {
             var column = dataTable.columns($(this).index());
             $('input', this).on('keyup change', function(e) {
