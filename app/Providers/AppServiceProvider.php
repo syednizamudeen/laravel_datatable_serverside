@@ -24,10 +24,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/../../vendor/components/jquery' => public_path('vendor/jquery'),
-            __DIR__ . '/../../vendor/twbs/bootstrap/dist' => public_path('vendor/bootstrap/dist'),
-            __DIR__ . '/../../vendor/datatables/datatables/media' => public_path('vendor/datatables'),
-            __DIR__ . '/../../vendor/fortawesome/font-awesome' => public_path('vendor/fontawesome'),
             __DIR__ . '/../../vendor/moment/moment/min' => public_path('vendor/moment')
         ], 'public');
     }

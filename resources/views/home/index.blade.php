@@ -3,11 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="{{asset('vendor/bootstrap/dist/css/bootstrap.min.css')}}">
-    <link rel="stylesheet" href="{{asset('vendor/datatables/css/dataTables.bootstrap4.min.css')}}">
-    {{-- <link rel="stylesheet" href="http://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.css"> --}}
-    <link rel="stylesheet" href="http://cdn.datatables.net/buttons/1.5.6/css/buttons.bootstrap4.min.css">
-    <link rel="stylesheet" href="{{asset('vendor/fontawesome/css/all.css')}}" type="text/css">
+    <link rel="stylesheet" href="{{asset('css/app.css')}}">
     <style>
         .dt-button-collection li.buttons-columnVisibility a:before {
           display: inline-block;
@@ -68,25 +64,23 @@
             </div>
         </div>
     </main>
-    <script src="{{asset('vendor/jquery/jquery.min.js')}}"></script>
-    <script src="{{asset('vendor/datatables/js/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('vendor/datatables/js/dataTables.bootstrap4.min.js')}}"></script>
-    <script src="http://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
-    <script src="http://cdn.datatables.net/buttons/1.5.6/js/buttons.bootstrap4.min.js"></script>
-    <script src="http://cdn.datatables.net/buttons/1.5.6/js/buttons.colVis.js"></script>
-    <script src="{{asset('vendor/bootstrap/dist/js/bootstrap.min.js')}}"></script>
+    <script src="{{asset('js/app.js')}}"></script>
     <script src="{{asset('vendor/moment/moment.min.js')}}"></script>
     <script>
     var APP_URL = {!! json_encode(url('/')) !!}, dataTable, columns = {!! $columns !!}, name = {!! array_search('name', array_column(json_decode($columns, true), 'data')) !!}, income = {!! array_search('annualincome', array_column(json_decode($columns, true), 'data')) !!}, age = {!! array_search('age', array_column(json_decode($columns, true), 'data')) !!}, created_at = {!! array_search('created_at', array_column(json_decode($columns, true), 'data')) !!}, updated_at = {!! array_search('updated_at', array_column(json_decode($columns, true), 'data')) !!};
     $(document).ready(function() {
         dataTable = $('#example').DataTable({
-            "dom": '<"card"<"card-header"<"boxtitle float-left"><"float-right"B>><"card-body p-0"t><"card-footer"<"row"<"col-6"i><"col-6"p>>>>',
+            "dom": '<"card"<"card-header"<"boxtitle float-left"><"float-right"B>><"card-body p-0"t><"card-footer"<"float-left"i><"float-right"p>>>',
             "processing": true,
             "serverSide": true,
             "orderCellsTop": true,
             "ajax": APP_URL+"/home/datatable",
             "columns": columns,
             "order": [[ name, "asc" ]],
+            "lengthMenu": [
+                [ 10, 25, 50, 100 ],
+                [ '10 rows', '25 rows', '50 rows', '100 rows' ]
+            ],
             "buttons": {
                 dom: {
                     button: {
@@ -97,7 +91,7 @@
                 buttons: [
                     {
                         extend:    'colvis',
-                        text:      '<i class="fa fa-columns fa-lg fa-fw text-white"></i>Columns',
+                        text:      '<i class="fa fa-columns fa-fw text-white"></i> Columns',
                         titleAttr: 'Show/Hide Column(s)',
                         className: 'btn-primary',
                         autoClose: true,
@@ -107,6 +101,13 @@
                         titleAttr: 'Rows per Page',
                         className: 'btn-primary',
                         autoClose: true,
+                    },
+                    {
+                        text: '<i class="fas fa-upload fa-fw text-white"></i> Import',
+                        titleAttr: 'Bulk Upload',
+                        className: 'btn-primary',
+                        action: function ( e, dt, node, config ) {
+                        }
                     }
                 ]
             },
@@ -131,6 +132,14 @@
                 $.each($('th', '#example tr:first'), function(i) {
                     $(this).css("border-top", "unset");
                 });
+            },
+            "language": {
+                buttons: {
+                    pageLength:{
+                        _: '<i class="fas fa-th-list fa-fw text-white" aria-hidden="true"></i> %d Rows',
+                        '-1': '<i class="fas fa-th-list fa-fw text-white" aria-hidden="true"></i> Show All'
+                    }
+                }
             }
         });
         $("div.boxtitle").html('<h4 class="m-0">{{$heading}}</h4>');
