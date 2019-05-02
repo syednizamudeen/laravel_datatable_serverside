@@ -100,8 +100,7 @@ class HomeController extends Controller
      */
     public function datatable(Request $request)
     {
-        $dt = new DataTable(new home, $request);
-        return response()->json($dt->get());
+        return response()->json((new DataTable(new home, $request))->get());
     }
 }
 
