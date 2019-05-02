@@ -34,7 +34,6 @@ require('./bootstrap');
 
 import $ from 'jquery';
 window.$ = window.jQuery = $;
-// import 'bootstrap';
 import '@fortawesome/fontawesome-free/js/all';
 require( 'jszip' );
 require( 'datatables.net-bs4' );
@@ -45,3 +44,4 @@ require( 'datatables.net-buttons/js/buttons.print.js' );
 require( 'datatables.net-fixedheader-bs4' );
 require( 'datatables.net-responsive-bs4' );
 require( 'datatables.net-select-bs4' );
+window.moment = require('moment');
