@@ -23,8 +23,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([
-            __DIR__ . '/../../vendor/moment/moment/min' => public_path('vendor/moment')
-        ], 'public');
+        // 
     }
 }
