@@ -18,6 +18,7 @@ and enter necessary configurations including database detail
 Install Plugins required by application using Package Manager
 
 `composer install`
+
 `npm install`
 
 ### Step 4:
