@@ -213,7 +213,7 @@ class DataTable
     {
         foreach($this->requestParam->columns as $k => $v)
         {
-            if ($v['searchable'] == true && $v['search']['value'] != '')
+            if (($v['searchable'] === true || $v['searchable'] === 'true') && $v['search']['value'] != '')
             {
                 $this->query->where($v['data'], 'LIKE', '%' . $v['search']['value'] . '%');
                 if ($this->isQueryBind)
