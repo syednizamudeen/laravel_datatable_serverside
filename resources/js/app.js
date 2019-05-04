@@ -34,7 +34,6 @@ require('./bootstrap');
 
 import $ from 'jquery';
 window.$ = window.jQuery = $;
-import '@fortawesome/fontawesome-free/js/all';
 require( 'jszip' );
 require( 'pdfmake' );
 require( 'datatables.net-bs4' );
