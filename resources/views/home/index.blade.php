@@ -3,30 +3,31 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{asset('css/app.css')}}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/awesome-bootstrap-checkbox/1.0.1/awesome-bootstrap-checkbox.min.css">
     <style>
-        .dt-button-collection li.buttons-columnVisibility a:before {
+        .dt-button-collection a.buttons-columnVisibility span:before {
           display: inline-block;
-          font: normal normal normal 14px/1 FontAwesome;
+          font: normal normal normal 14px/1 "Font Awesome 5 Free";
           font-size: inherit;
           text-rendering: auto;
           -webkit-font-smoothing: antialiased;
           transform: translate(0,0);
-          content: "\f00d";
+          content: "\f070";
           margin-right: 13px;
+          font-weight: 900;
         }
     
-        .dt-button-collection li.buttons-columnVisibility.active a:before {
+        .dt-button-collection a.buttons-columnVisibility.active span:before {
           display: inline-block;
-          font: normal normal normal 14px/1 FontAwesome;
+          font: normal normal normal 14px/1 "Font Awesome 5 Free";
           font-size: inherit;
           text-rendering: auto;
           -webkit-font-smoothing: antialiased;
           transform: translate(0,0);
-          content: "\f00c";
+          content: "\f06e";
           margin-right: 10px;
+          font-weight: 900;
         }
         .card-header > .datatable-box-tools {
           color: #ffffff;
@@ -60,8 +61,8 @@
                             <th class="input-filter">
                                 @if($column['type'] == 'checkbox')
                                 <div class="form-check abc-checkbox abc-checkbox-primary">
-                                    <input class="form-check-input" id="checkbox1" type="checkbox">
-                                    <label class="form-check-label" for="checkbox1"></label>
+                                    <input class="form-check-input" id="checkall" type="checkbox">
+                                    <label class="form-check-label" for="checkall"></label>
                                 </div>
                                 @else
                                 <div class="input-group input-group-sm">
@@ -80,7 +81,6 @@
         </div>
     </main>
     <script src="{{asset('js/app.js')}}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.js"></script>
     <script>
     var APP_URL = {!! json_encode(url('/')) !!}, dataTable, columns = {!! $columns !!}, id = {!! array_search('id', array_column(json_decode($columns, true), 'data')) !!}, name = {!! array_search('name', array_column(json_decode($columns, true), 'data')) !!}, income = {!! array_search('annualincome', array_column(json_decode($columns, true), 'data')) !!}, age = {!! array_search('age', array_column(json_decode($columns, true), 'data')) !!}, created_at = {!! array_search('created_at', array_column(json_decode($columns, true), 'data')) !!}, updated_at = {!! array_search('updated_at', array_column(json_decode($columns, true), 'data')) !!};
     $(document).ready(function() {
@@ -89,16 +89,24 @@
             "processing": true,
             "serverSide": true,
             "orderCellsTop": true,
-            "ajax": APP_URL+"/home/datatable",
+            // "fixedHeader": true,
+            // "ajax": APP_URL+"/home/datatable",
             "ajax": {
                 "url": APP_URL+"/home/datatable",
                 "data": function( d ) {
                     d.myKey = "myValue";
                     // d.custom = $('#myInput').val();
+                },
+                "beforeSend": function (request) {
+                    request.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
                 }
             },
             "columns": columns,
             "order": [[ name, "asc" ]],
+            "select": {
+                "style":    'multi',
+                "selector": 'table tbody td input[type="checkbox"]'
+            },
             "lengthMenu": [
                 [ 10, 25, 50, 100, 500 ],
                 [ '10 rows', '25 rows', '50 rows', '100 rows', '500 rows' ]
@@ -125,6 +133,55 @@
                         autoClose: true,
                     },
                     {
+                        extend: 'collection',
+                        text: '<i class="fas fa-download fa-fw text-white"></i>Export',
+                        className: 'btn-primary',
+                        autoClose: true,
+                        buttons: [
+                            {
+                            extend:    'excelHtml5',
+                            exportOptions: {
+                                columns: ':visible:not(.disableColhide)',
+                                rows: { selected: true }
+                            },
+                            text: '<i class="fas fa-file-excel fa-fw text-primary"></i>Excel',
+                            titleAttr: 'Excel',
+                            },
+                            {
+                            extend: 'csvHtml5',
+                            exportOptions: {
+                                columns: ':visible:not(.disableColhide)',
+                                rows: { selected: true }
+                            },
+                            text: '<i class="fas fa-file-csv fa-fw text-primary"></i>CSV',
+                            titleAttr: 'CSV',
+                            },
+                            {
+                            extend: 'pdfHtml5',
+                            exportOptions: {
+                                columns: ':visible:not(.disableColhide)',
+                                rows: { selected: true }
+                            },
+                            orientation: 'landscape',
+                            pageSize: 'A4',
+                            title: 'eClaim - Summary',
+                            /* message: 'downloaded on '+moment().format("DD-MM-YYYY h:mm A"), */
+                            text: '<i class="fas fa-file-pdf fa-fw text-primary"></i>PDF',
+                            titleAttr: 'PDF',
+                            }/* ,
+                            {
+                            extend: 'print',
+                            exportOptions: {
+                                columns: ':visible:not(.disableColhide)',
+                                rows: { selected: true }
+                            },
+                            text: '<i class="fa fa-print fa-fw fa-lg text-primary"></i>Print',
+                            titleAttr: 'Print',
+                            className: 'btn-sm'
+                            } */
+                        ]
+                    },
+                    {
                         text: '<i class="fas fa-upload fa-fw text-white"></i> Import',
                         titleAttr: 'Bulk Upload',
                         className: 'btn-primary',
@@ -139,7 +196,8 @@
                     "searchable": false,
                     "orderable": false,
                     "render": function ( data, type, row, meta ) {
-                        return data;
+                        return '<div class="form-check abc-checkbox abc-checkbox-primary"><input class="form-check-input checkrow" id="checkbox'+data+'" type="checkbox"><label class="form-check-label" for="checkbox'+data+'"></label></div>';
+                        // return data;
                     }
                 },
                 {
@@ -164,8 +222,10 @@
                 });
             },
             "language": {
-                buttons: {
-                    pageLength:{
+                "loadingRecords": '&nbsp;',
+                "processing": '<div class="text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>',
+                "buttons": {
+                    pageLength: {
                         _: '<i class="fas fa-th-list fa-fw text-white" aria-hidden="true"></i> %d Rows',
                         '-1': '<i class="fas fa-th-list fa-fw text-white" aria-hidden="true"></i> Show All'
                     }
@@ -180,15 +240,20 @@
                 $('input', this).daterangepicker({
                     autoUpdateInput: false,
                     timePicker: true,
-                    startDate: moment().startOf('hour'),
-                    endDate: moment().startOf('hour').add(32, 'hour'),
+                    startDate: moment().startOf('day').subtract(8, 'days'),
+                    endDate: moment().endOf('day').subtract(1, 'days'),
+                    drops: "down",
+                    opens: "left",
                     locale: {
-                        format: 'M/DD hh:mm A'
+                        format: 'YY/M/DD hh:mm A'
                     }
                 }).on('apply.daterangepicker', function(ev, picker) {
-                    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+                    $(this).val(picker.startDate.format('DD MMM YY HH:mm') + ' - ' + picker.endDate.format('DD MMM YY HH:mm'));
                 }).on('cancel.daterangepicker', function(ev, picker) {
                     $(this).val('');
+                    dataTable.column(i).search('').draw();
+                }).bind("keydown cut copy paste",function(e) {
+                    e.preventDefault();      
                 });
             }
             $('input', this).on('keyup change', function(e) {
@@ -203,6 +268,19 @@
                 $(this).parent().parent().find("input[type=text]:first").val('');
                 dataTable.column(i).search('').draw();
             });
+        });
+        $('#example').on('change', '#checkall', function(e) {
+            e.preventDefault();
+            that = this.checked;
+            $('.checkrow').each(function( index ) {
+                $( this ).prop('checked', that).change();
+            });
+            if (that) {
+                dataTable.rows().select();
+            }
+            else {
+                dataTable.rows().deselect();
+            }
         });
     });
     </script>
