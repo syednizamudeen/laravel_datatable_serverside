@@ -35,11 +35,18 @@
           right: 10px;
           top: 5px;
         }
-        /* $font-family-icon: 'Font Awesome 5 Free'; */
         .abc-checkbox input[type="checkbox"]:checked + label::after, .abc-checkbox input[type="radio"]:checked + label::after {
             font-family: "Font Awesome 5 Free";
             content: "\f00c"; 
             font-weight: 900;
+        }
+        .input-filter input {
+            border-right: unset;
+        }
+        .input-filter button {
+            color: #818486;
+            border: 1px solid #ced4da;
+            border-left: unset;
         }
     </style>
     <title>{{config('app.name','Laravel DataTable')}}</title>
@@ -68,7 +75,7 @@
                                 <div class="input-group input-group-sm">
                                     <input type="text" class="form-control" placeholder="Search {{$column['label']}}" filter-type="{{$column['type']}}">
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary clearfilter" type="button"><i class="fas fa-times-circle"></i></button>
+                                        <button class="btn clearfilter" type="button"><i class="fas fa-times-circle"></i></button>
                                     </div>
                                 </div>
                                 @endif
@@ -164,7 +171,7 @@
                             },
                             orientation: 'landscape',
                             pageSize: 'A4',
-                            title: 'eClaim - Summary',
+                            title: 'Summary',
                             /* message: 'downloaded on '+moment().format("DD-MM-YYYY h:mm A"), */
                             text: '<i class="fas fa-file-pdf fa-fw text-primary"></i>PDF',
                             titleAttr: 'PDF',
@@ -244,6 +251,7 @@
             if ($('input', this).attr('filter-type') == 'datetimerange')
             {
                 $('input', this).daterangepicker({
+                    showDropdowns: true,
                     autoUpdateInput: false,
                     timePicker: true,
                     startDate: moment().startOf('day').subtract(8, 'days'),
