@@ -40,3 +40,13 @@ Sample Data
 Application ready for use
 
 `php artisan serve` _[or]_ `php artisan serve --host=some.other.domain --port=8001`
+
+# F.A.Q.
+
+### Icons not Loaded:
+
+Filename: webpack.mix.js
+
+`.setResourceRoot('../../public/');`
+
+Comment or modify this line based on your Server Setup.
