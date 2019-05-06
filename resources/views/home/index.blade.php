@@ -221,6 +221,12 @@
                     $(this).css("border-top", "unset");
                 });
             },
+            "drawCallback": function( settings ) {
+                if($('#checkall').prop("checked") == true)
+                {
+                    $('#checkall').prop('checked', false);
+                }
+            },
             "language": {
                 "loadingRecords": '&nbsp;',
                 "processing": '<div class="text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>',
@@ -248,7 +254,7 @@
                         format: 'YY/M/DD hh:mm A'
                     }
                 }).on('apply.daterangepicker', function(ev, picker) {
-                    $(this).val(picker.startDate.format('DD MMM YY HH:mm') + ' - ' + picker.endDate.format('DD MMM YY HH:mm'));
+                    $(this).val(picker.startDate.format('DD MMM YY HH:mm') + ' - ' + picker.endDate.format('DD MMM YY HH:mm')).change();
                 }).on('cancel.daterangepicker', function(ev, picker) {
                     $(this).val('');
                     dataTable.column(i).search('').draw();
