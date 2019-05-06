@@ -4,51 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="{{asset('css/app.css')}}">
-    <style>
-        .dt-button-collection a.buttons-columnVisibility span:before {
-          display: inline-block;
-          font: normal normal normal 14px/1 "Font Awesome 5 Free";
-          font-size: inherit;
-          text-rendering: auto;
-          -webkit-font-smoothing: antialiased;
-          transform: translate(0,0);
-          content: "\f070";
-          margin-right: 13px;
-          font-weight: 900;
-        }
-    
-        .dt-button-collection a.buttons-columnVisibility.active span:before {
-          display: inline-block;
-          font: normal normal normal 14px/1 "Font Awesome 5 Free";
-          font-size: inherit;
-          text-rendering: auto;
-          -webkit-font-smoothing: antialiased;
-          transform: translate(0,0);
-          content: "\f06e";
-          margin-right: 10px;
-          font-weight: 900;
-        }
-        .card-header > .datatable-box-tools {
-          color: #ffffff;
-          position: absolute;
-          right: 10px;
-          top: 5px;
-        }
-        .abc-checkbox input[type="checkbox"]:checked + label::after, .abc-checkbox input[type="radio"]:checked + label::after {
-            font-family: "Font Awesome 5 Free";
-            content: "\f00c"; 
-            font-weight: 900;
-        }
-        .input-filter input {
-            border-right: unset;
-        }
-        .input-filter button {
-            color: #818486;
-            border: 1px solid #ced4da;
-            border-left: unset;
-        }
-    </style>
+    <link rel="stylesheet" href="{{asset('css/app.css')}}">    
     <title>{{config('app.name','Laravel DataTable')}}</title>
 </head>
 <body>
@@ -127,6 +83,63 @@
                 },
                 buttons: [
                     {
+                        text: '<i class="fas fa-plus fa-fw text-white"></i>Create',
+                        titleAttr: 'Add New',
+                        className: 'btn-primary',
+                        action: function ( e, dt, node, config ) {            
+                        }
+                    },
+                    {
+                        text: '<i class="fas fa-folder-open fa-fw text-white"></i>View',
+                        titleAttr: 'Open',
+                        className: 'btn-primary',
+                        action: function ( e, dt, node, config ) {            
+                        }
+                    },
+                    {
+                        extend: 'collection',
+                        text: '<i class="fas fa-check-square fa-fw text-white"></i>Selection',
+                        className: 'btn-primary',
+                        autoClose: true,
+                        buttons: [
+                            {
+                                text: '<i class="fas fa-toggle-on fa-fw text-primary"></i>Enable',
+                                titleAttr: 'Activate / On',
+                                className: 'btn-primary',
+                                action: function ( e, dt, node, config ) {            
+                                }
+                            },
+                            {
+                                text: '<i class="fas fa-toggle-off fa-fw text-primary"></i>Disable',
+                                titleAttr: 'Deactivate / off',
+                                className: 'btn-primary',
+                                action: function ( e, dt, node, config ) {            
+                                }
+                            },
+                            {
+                                text: '<i class="fas fa-edit fa-fw text-primary"></i>Edit',
+                                titleAttr: 'Update / Modify',
+                                className: 'btn-primary',
+                                action: function ( e, dt, node, config ) {            
+                                }
+                            },
+                            {
+                                text: '<i class="fas fa-copy fa-fw text-primary"></i>Copy',
+                                titleAttr: 'Duplicate',
+                                className: 'btn-primary',
+                                action: function ( e, dt, node, config ) {            
+                                }
+                            },
+                            {
+                                text: '<i class="fas fa-trash fa-fw text-primary"></i>Delete',
+                                titleAttr: 'Remove',
+                                className: 'btn-primary',
+                                action: function ( e, dt, node, config ) {
+                                }
+                            }
+                        ]
+                    },
+                    {
                         extend:    'colvis',
                         text:      '<i class="fa fa-columns fa-fw text-white"></i> Columns',
                         titleAttr: 'Show/Hide Column(s)',
@@ -201,7 +214,7 @@
             "columnDefs": [
                 {
                     "targets": id,
-                    "className": 'disableColhide',
+                    "className": 'disableColhide text-center',
                     "searchable": false,
                     "orderable": false,
                     "render": function ( data, type, row, meta ) {
