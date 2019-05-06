@@ -215,15 +215,33 @@ class DataTable
         {
             if (($v['searchable'] === true || $v['searchable'] === 'true') && $v['search']['value'] != '')
             {
-                $this->query->where($v['data'], 'LIKE', '%' . $v['search']['value'] . '%');
-                if ($this->isQueryBind)
+                $columntype = array_search($v['data'], array_column($this->columnMapping, 'database'));
+                if ($this->columnMapping[$columntype]['type'] == 'text')
                 {
-                    $this->query->where($v['data'], 'LIKE', '%' . $v['search']['value'] . '%');
-                }
-                else
+                    if ($this->isQueryBind)
+                    {
+                        $this->query->where($v['data'], 'LIKE', '%' . $v['search']['value'] . '%');
+                    }
+                    else
+                    {
+                        $this->query = $this->query::where($v['data'], 'LIKE', '%' . $v['search']['value'] . '%');
+                        $this->isQueryBind = true;
+                    }
+                } elseif ($this->columnMapping[$columntype]['type'] == 'datetimerange')
                 {
-                    $this->query = $this->query::where($v['data'], 'LIKE', '%' . $v['search']['value'] . '%');
-                    $this->isQueryBind = true;
+                    $daterange = explode("-", $v['search']['value']);
+                    $daterange = array_map('trim', $daterange);
+                    $from = date_format(date_create_from_format('d M y H:s', $daterange[0]), 'Y-m-d H:s:00');
+                    $to = date_format(date_create_from_format('d M y H:s', $daterange[1]), 'Y-m-d H:s:59');
+                    if ($this->isQueryBind)
+                    {
+                        $this->query->whereBetween($v['data'], [$from, $to]);
+                    }
+                    else
+                    {
+                        $this->query = $this->query::whereBetween($v['data'], [$from, $to]);
+                        $this->isQueryBind = true;
+                    }
                 }
             }
         }
