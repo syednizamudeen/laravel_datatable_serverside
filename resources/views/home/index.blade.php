@@ -256,7 +256,7 @@
                     e.preventDefault();      
                 });
             }
-            $('input', this).on('keyup change', function(e) {
+            $("input[type=text]", this).on('keyup change', function(e) {
                 e.preventDefault();
                 // if ( dataTable.column(i).search() !== this.value ) {
                     // dataTable.column(i).search( this.value ).draw();
