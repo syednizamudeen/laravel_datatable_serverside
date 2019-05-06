@@ -132,6 +132,7 @@
                         titleAttr: 'Show/Hide Column(s)',
                         className: 'btn-primary',
                         autoClose: true,
+                        columns: ':not(.disableColhide)'
                     },
                     {
                         extend:    'pageLength',
@@ -200,6 +201,7 @@
             "columnDefs": [
                 {
                     "targets": id,
+                    "className": 'disableColhide',
                     "searchable": false,
                     "orderable": false,
                     "render": function ( data, type, row, meta ) {
