@@ -36,6 +36,8 @@ Sample Data
 
 `php artisan db:seed --class=HomeSeeder`
 
+`php artisan db:seed --class=DetailsTableSeeder`
+
 ### Step 7:
 Application ready for use
 
