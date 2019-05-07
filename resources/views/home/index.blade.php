@@ -49,8 +49,7 @@
     <script>
     (function ( $ ) {
         $.fn._DataTables = function( options ) {
-            var dT, elementId = this.attr('id');
-            var settings = $.extend({
+            var dT,settings = $.extend({
                 "dom": '<"card"<"card-header"<"boxtitle float-left"><"float-right"B>><"card-body p-0"tr><"card-footer"<"float-left"i><"float-right"p>>>',
                 "processing": true,
                 "serverSide": true,
@@ -215,7 +214,7 @@
                 },
                 "columnDefs": [],
                 "initComplete": function(settings, json) {
-                    $.each($('th', elementId + ' tr:first'), function(i) {
+                    $.each($('th', this.find('tr:first')), function(i) {
                         $(this).css("border-top", "unset");
                     });
                 },
