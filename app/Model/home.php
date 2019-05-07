@@ -16,4 +16,9 @@ class home extends Model
         ['database'=>'created_at', 'label'=> 'Created At' , 'type'=>'datetimerange'],
         ['database'=>'updated_at', 'label'=> 'Updated At' , 'type'=>'datetimerange']
     ];
+
+    public function detail()
+    {
+        return $this->hasOne('App\Model\Details', 'home_id', 'id');
+    }
 }
