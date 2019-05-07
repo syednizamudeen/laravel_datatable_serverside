@@ -51,7 +51,7 @@
         $.fn._DataTables = function( options ) {
             var dT, elementId = this.attr('id');
             var settings = $.extend({
-                "dom": '<"card"<"card-header"<"boxtitle float-left"><"float-right"B>><"card-body p-0"t><"card-footer"<"float-left"i><"float-right"p>>>',
+                "dom": '<"card"<"card-header"<"boxtitle float-left"><"float-right"B>><"card-body p-0"tr><"card-footer"<"float-left"i><"float-right"p>>>',
                 "processing": true,
                 "serverSide": true,
                 "orderCellsTop": true,
