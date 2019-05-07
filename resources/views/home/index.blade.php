@@ -21,21 +21,23 @@
                         </tr>
                         <tr>
                             @foreach($columnmapping as $column)
-                            <th class="input-filter">
-                                @if($column['type'] == 'checkbox')
+                            @if($column['type'] == 'checkbox')
+                            <th class="input-filter text-center">
                                 <div class="form-check abc-checkbox abc-checkbox-primary">
                                     <input class="form-check-input" id="checkall" type="checkbox">
                                     <label class="form-check-label" for="checkall"></label>
                                 </div>
-                                @else
+                            </th>
+                            @else
+                            <th class="input-filter">
                                 <div class="input-group input-group-sm">
                                     <input type="text" class="form-control" placeholder="Search {{$column['label']}}" filter-type="{{$column['type']}}">
                                     <div class="input-group-append">
                                         <button class="btn clearfilter" type="button"><i class="fas fa-times-circle"></i></button>
                                     </div>
                                 </div>
-                                @endif
                             </th>
+                            @endif
                             @endforeach
                         </tr>
                     </thead>
