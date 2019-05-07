@@ -94,6 +94,7 @@
                             text: '<i class="fas fa-folder-open fa-fw text-white"></i>View',
                             titleAttr: 'Open',
                             className: 'btn-primary',
+                            enabled: false,
                             action: function ( e, dt, node, config ) {            
                             }
                         },
@@ -250,6 +251,10 @@
                     dT.rows().deselect();
                 }
             });    
+            dT.on( 'select deselect', function(e, dt, type, indexes) {
+                var selectedRows = dT.rows( { selected: true } ).count();        
+                dT.button( 1 ).enable( selectedRows === 1 );
+            });
             $('.input-filter', this.find('tr')).each(function(i) {
                 var column = dT.columns($(this).index());
                 if ($('input', this).attr('filter-type') == 'datetimerange')
@@ -291,7 +296,7 @@
     }( jQuery ));
     var APP_URL = {!! json_encode(url('/')) !!}, dataTable, columns = {!! $columns !!}, id = {!! array_search('id', array_column(json_decode($columns, true), 'data')) !!}, name = {!! array_search('name', array_column(json_decode($columns, true), 'data')) !!}, income = {!! array_search('annualincome', array_column(json_decode($columns, true), 'data')) !!}, age = {!! array_search('age', array_column(json_decode($columns, true), 'data')) !!}, created_at = {!! array_search('created_at', array_column(json_decode($columns, true), 'data')) !!}, updated_at = {!! array_search('updated_at', array_column(json_decode($columns, true), 'data')) !!};
     $(document).ready(function() {
-        dataTable = $('#example')._DataTables({
+        $('#example')._DataTables({
             "ajax": {
                 "url": APP_URL+"/home/datatable"
             },
