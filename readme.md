@@ -34,7 +34,7 @@ Create Database and run migration
 ### Step 6:
 Sample Data
 
-`php artisan sb:seed --class=HomeSeeder`
+`php artisan db:seed --class=HomeSeeder`
 
 ### Step 7:
 Application ready for use
