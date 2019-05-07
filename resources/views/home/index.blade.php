@@ -134,60 +134,55 @@
                     },
                     buttons: [
                         {
-                            text: '<i class="fas fa-plus fa-fw text-white"></i>Create',
+                            text: '<i class="fas fa-plus fa-fw"></i>Create',
                             titleAttr: 'Add New',
-                            className: 'btn-primary',
+                            className: 'btn-outline-secondary',
                             attr:  {
                                 "data-toggle": 'modal',
                                 "data-target": '#createModal'
                             }
                         },
                         {
-                            text: '<i class="fas fa-folder-open fa-fw text-white"></i>View',
+                            text: '<i class="fas fa-folder-open fa-fw"></i>View',
                             titleAttr: 'Open',
-                            className: 'btn-primary',
+                            className: 'btn-outline-secondary',
                             enabled: false,
                             action: function ( e, dt, node, config ) {            
                             }
                         },
                         {
                             extend: 'collection',
-                            text: '<i class="fas fa-check-square fa-fw text-white"></i>Selection',
-                            className: 'btn-primary',
+                            text: '<i class="fas fa-check-square fa-fw"></i>Selection',
+                            className: 'btn-outline-secondary',
                             autoClose: true,
                             buttons: [
                                 {
                                     text: '<i class="fas fa-toggle-on fa-fw text-primary"></i>Enable',
                                     titleAttr: 'Activate / On',
-                                    className: 'btn-primary',
                                     action: function ( e, dt, node, config ) {            
                                     }
                                 },
                                 {
                                     text: '<i class="fas fa-toggle-off fa-fw text-primary"></i>Disable',
                                     titleAttr: 'Deactivate / off',
-                                    className: 'btn-primary',
                                     action: function ( e, dt, node, config ) {            
                                     }
                                 },
                                 {
                                     text: '<i class="fas fa-edit fa-fw text-primary"></i>Edit',
                                     titleAttr: 'Update / Modify',
-                                    className: 'btn-primary',
                                     action: function ( e, dt, node, config ) {            
                                     }
                                 },
                                 {
                                     text: '<i class="fas fa-copy fa-fw text-primary"></i>Copy',
                                     titleAttr: 'Duplicate',
-                                    className: 'btn-primary',
                                     action: function ( e, dt, node, config ) {            
                                     }
                                 },
                                 {
                                     text: '<i class="fas fa-trash fa-fw text-primary"></i>Delete',
                                     titleAttr: 'Remove',
-                                    className: 'btn-primary',
                                     action: function ( e, dt, node, config ) {
                                     }
                                 }
@@ -195,22 +190,22 @@
                         },
                         {
                             extend:    'colvis',
-                            text:      '<i class="fa fa-columns fa-fw text-white"></i> Columns',
+                            text:      '<i class="fa fa-columns fa-fw"></i> Columns',
                             titleAttr: 'Show/Hide Column(s)',
-                            className: 'btn-primary',
+                            className: 'btn-outline-secondary',
                             autoClose: true,
                             columns: ':not(.disableColhide)'
                         },
                         {
                             extend:    'pageLength',
                             titleAttr: 'Rows per Page',
-                            className: 'btn-primary',
+                            className: 'btn-outline-secondary',
                             autoClose: true,
                         },
                         {
                             extend: 'collection',
-                            text: '<i class="fas fa-download fa-fw text-white"></i>Export',
-                            className: 'btn-primary',
+                            text: '<i class="fas fa-download fa-fw"></i>Export',
+                            className: 'btn-outline-secondary',
                             autoClose: true,
                             buttons: [
                                 {
@@ -257,9 +252,9 @@
                             ]
                         },
                         {
-                            text: '<i class="fas fa-upload fa-fw text-white"></i> Import',
+                            text: '<i class="fas fa-upload fa-fw"></i> Import',
                             titleAttr: 'Bulk Upload',
-                            className: 'btn-primary',
+                            className: 'btn-outline-secondary',
                             action: function ( e, dt, node, config ) {
                             }
                         }
@@ -282,8 +277,8 @@
                     "processing": '<div class="text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>',
                     "buttons": {
                         pageLength: {
-                            _: '<i class="fas fa-th-list fa-fw text-white" aria-hidden="true"></i> %d Rows',
-                            '-1': '<i class="fas fa-th-list fa-fw text-white" aria-hidden="true"></i> Show All'
+                            _: '<i class="fas fa-th-list fa-fw" aria-hidden="true"></i> %d Rows',
+                            '-1': '<i class="fas fa-th-list fa-fw" aria-hidden="true"></i> Show All'
                         }
                     }
                 }
