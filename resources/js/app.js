@@ -46,3 +46,4 @@ require( 'datatables.net-responsive-bs4' );
 require( 'datatables.net-select-bs4' );
 require( 'daterangepicker/daterangepicker.js' );
 window.moment = require('moment');
+require('./custom');
