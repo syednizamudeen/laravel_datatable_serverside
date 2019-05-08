@@ -33,7 +33,7 @@ class HomeController extends Controller
      */
     public function create()
     {
-        //
+        abort(404, 'The resource you are looking for could not be found');
     }
 
     /**
@@ -66,7 +66,7 @@ class HomeController extends Controller
      */
     public function edit(home $home)
     {
-        //
+        abort(404, 'The resource you are looking for could not be found');
     }
 
     /**
