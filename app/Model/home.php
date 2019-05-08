@@ -19,6 +19,6 @@ class home extends Model
 
     public function detail()
     {
-        return $this->hasOne('App\Model\Details', 'home_id', 'id');
+        return $this->hasOne('App\Model\Detail', 'home_id', 'id');
     }
 }
