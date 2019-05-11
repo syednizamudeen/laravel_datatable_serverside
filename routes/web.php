@@ -14,4 +14,5 @@
 Route::get('/', 'HomeController@index');
 
 Route::get('home/datatable', 'HomeController@datatable');
+Route::get('home/datatablerelation', 'HomeController@datatablerelation');
 Route::resource('home','HomeController');
