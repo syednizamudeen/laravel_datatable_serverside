@@ -124,6 +124,7 @@ class HomeController extends Controller
 class DataTable
 {
     private $query;
+    private $order;
     private $filterQuery;
     private $requestParam;
     private $recordSet;
@@ -146,10 +147,32 @@ class DataTable
         $this->columnMapping = $className::$dataTableColumnMapping;
         $this->isQueryBind = false;
         $this->query = $className;
+        $mapping = array_column($this->columnMapping, 'database');
+        $this->order = array_map(function($n) use($mapping) {
+            if (array_key_exists($n['column'], $mapping))
+            {
+                return ['column' => $mapping[$n['column']], 'dir' => $n['dir']];
+            }
+            else
+            {
+                return $n;
+            }
+        }, $this->requestParam->order);        
 
         if(!empty($alias))
         {
             $this->columnMapping = $className::$dataTableRelationalColumnMapping;
+            $mapping = array_column($this->columnMapping, 'database');
+            $this->order = array_map(function($n) use($mapping) {
+                if (array_key_exists($n['column'], $mapping))
+                {
+                    return ['column' => $mapping[$n['column']], 'dir' => $n['dir']];
+                }
+                else
+                {
+                    return $n;
+                }
+            }, $this->requestParam->order);
             $this->join($alias);
         }
         $this->filter();
@@ -182,6 +205,7 @@ class DataTable
      */
     private function formatOutput()
     {
+        // error_log(print_r($this->recordSet->toArray(), 1));
         $formattedOutput = [];
         $dbCol = array_column($this->columnMapping, 'database');
         foreach($this->recordSet as $k)
@@ -221,6 +245,7 @@ class DataTable
         {
             // $this->query->with($alias);
             $this->query->with([$alias => function ($query) {
+                $this->orderRelation($query);
                 // $query->where('title', 'like', '%first%');
                 // $query->orderBy('created_at', 'desc');
             }]);
@@ -229,8 +254,10 @@ class DataTable
         {
             // $this->query = $this->query->with($alias);
             $this->query = $this->query->with([$alias => function ($query) {
+                $this->orderRelation($query);
                 // $query->where('title', 'like', '%first%');
                 // $query->orderBy('created_at', 'desc');
+                // $query->orderBy('email', 'desc');
             }]);
             $this->isQueryBind = true;
         }
@@ -262,28 +289,44 @@ class DataTable
      */
     private function order()
     {
-        $mapping = array_column($this->columnMapping, 'database');
-        $order = array_map(function($n) use($mapping) {
-            if (array_key_exists($n['column'], $mapping))
+        $order = array_filter($this->order, function($e) {
+            # Remove Relational Table column from ordering
+            return count(explode(".", $e['column'])) == 1;
+        });
+        if(!empty($order))
+        {
+            foreach ($order as $k)
             {
-                return ['column' => $mapping[$n['column']], 'dir' => $n['dir']];
+                $orderMode = $k['dir'] == 'asc' ? 'ASC' : 'DESC';
+                if ($this->isQueryBind)
+                {
+                    $this->query->orderBy($k['column'], $orderMode);
+                }
+                else
+                {
+                    $this->query = $this->query->orderBy($k['column'], $orderMode);
+                    $this->isQueryBind = true;
+                }
             }
-            else
-            {
-                return $n;
-            }
-        }, $this->requestParam->order);
+        }
+    }
+
+    private function orderRelation($query)
+    {
+        $order = array_filter($this->order, function($e) {
+            # Return only Relational Table column from ordering
+            return count(explode(".", $e['column'])) > 1;
+        });
+        // error_log(print_r($this->requestParam->order, 1));
+        // error_log(print_r($this->order, 1));
         foreach ($order as $k)
         {
-            if ($this->isQueryBind)
-            {
-                $this->query->orderBy($k['column'], $k['dir']);
-            }
-            else
-            {
-                $this->query = $this->query->orderBy($k['column'], $k['dir']);
-                $this->isQueryBind = true;
-            }
+            $col = explode(".", $k['column'])[1];
+            $ord = $k['dir'] == 'asc' ? 'ASC' : 'DESC';
+            $query->orderBy($col, $ord);
+            // error_log(print_r($col, 1));
+            // error_log(print_r($ord, 1));
+            // $query->orderBy('email', 'desc');
         }
     }
 

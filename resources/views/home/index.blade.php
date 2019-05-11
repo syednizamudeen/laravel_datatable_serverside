@@ -80,7 +80,7 @@
     @include('home.create')
     <script src="{{asset('js/app.js')}}"></script>
     <script>
-    var APP_URL = {!! json_encode(url('/')) !!}, dataTable, columns = {!! $columns !!}, id = {!! array_search('id', array_column(json_decode($columns, true), 'data')) !!}, name = {!! array_search('name', array_column(json_decode($columns, true), 'data')) !!}, income = {!! array_search('annualincome', array_column(json_decode($columns, true), 'data')) !!}, age = {!! array_search('age', array_column(json_decode($columns, true), 'data')) !!}, created_at = {!! array_search('created_at', array_column(json_decode($columns, true), 'data')) !!}, updated_at = {!! array_search('updated_at', array_column(json_decode($columns, true), 'data')) !!}, relationalcolumns = {!! $relationalcolumns !!};
+    var APP_URL = {!! json_encode(url('/')) !!}, dataTable, columns = {!! $columns !!}, id = {!! array_search('id', array_column(json_decode($columns, true), 'data')) !!}, name = {!! array_search('name', array_column(json_decode($columns, true), 'data')) !!}, income = {!! array_search('annualincome', array_column(json_decode($columns, true), 'data')) !!}, age = {!! array_search('age', array_column(json_decode($columns, true), 'data')) !!}, created_at = {!! array_search('created_at', array_column(json_decode($columns, true), 'data')) !!}, updated_at = {!! array_search('updated_at', array_column(json_decode($columns, true), 'data')) !!}, relationalcolumns = {!! $relationalcolumns !!}, id_rel = {!! array_search('id', array_column(json_decode($relationalcolumns, true), 'data')) !!}, name_rel = {!! array_search('name', array_column(json_decode($relationalcolumns, true), 'data')) !!}, income_rel = {!! array_search('annualincome', array_column(json_decode($relationalcolumns, true), 'data')) !!}, age_rel = {!! array_search('age', array_column(json_decode($relationalcolumns, true), 'data')) !!}, created_at_rel = {!! array_search('created_at', array_column(json_decode($relationalcolumns, true), 'data')) !!}, updated_at_rel = {!! array_search('updated_at', array_column(json_decode($relationalcolumns, true), 'data')) !!};
     $(document).ready(function() {
         $('#example')._DataTables({
             "ajax": {
@@ -121,10 +121,10 @@
                 "url": APP_URL+"/home/datatablerelation"
             },
             "columns": relationalcolumns,
-            "order": [[ name, "asc" ]],
+            "order": [[ name_rel, "asc" ]],
             "columnDefs": [
                 {
-                    "targets": id,
+                    "targets": id_rel,
                     "className": 'disableColhide text-center',
                     "searchable": false,
                     "orderable": false,
@@ -133,16 +133,16 @@
                     }
                 },
                 {
-                    "targets": income,
+                    "targets": income_rel,
                     "className": 'text-right',
                     "render": $.fn.dataTable.render.number( ',', '.', 2, '$' )
                 },
                 {
-                    "targets": age,
+                    "targets": age_rel,
                     "className": 'text-center'
                 },
                 {
-                    "targets": [created_at, updated_at],
+                    "targets": [created_at_rel, updated_at_rel],
                     "render": function ( data, type, row, meta ) {
                         return moment(data).format("Do MMM YYYY h:mm a");
                     }
