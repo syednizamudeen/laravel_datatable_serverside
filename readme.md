@@ -1,4 +1,4 @@
-<img alt="GitHub" src="https://img.shields.io/github/license/syednizamudeen/laravel_datatable_serverside.svg">
+<img alt="GitHub language count" src="https://img.shields.io/github/languages/count/syednizamudeen/laravel_datatable_serverside.svg">
 <p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
 
 # Installation using github
