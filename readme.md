@@ -7,6 +7,10 @@
 Clone Repository
 
 `git clone https://github.com/syednizamudeen/laravel_datatable_serverside.git`
+
+Clone Repository (_from branch_)
+
+`git clone -b dev-table-relation https://github.com/syednizamudeen/laravel_datatable_serverside.git datatables`
 ### Step 2:
 `cd laravel_datatable_serverside`
 
