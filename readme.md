@@ -1,3 +1,4 @@
+<img alt="GitHub" src="https://img.shields.io/github/license/syednizamudeen/laravel_datatable_serverside.svg">
 <p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
 
 # Installation using github
