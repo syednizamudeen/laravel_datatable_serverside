@@ -26,7 +26,7 @@ class HomeController extends Controller
             'relationalcolumnmapping' => home::$dataTableRelationalColumnMapping,
             'relationalcolumns' => json_encode(array_map(function($n) {
                     return ["data" => $n];
-                }, array_column(home::$dataTableRelationalColumnMapping, 'database')
+                }, array_column(home::$dataTableRelationalColumnMapping, 'datatable')
             )),
         );
         return view('home.index')->with($data);
@@ -117,7 +117,7 @@ class HomeController extends Controller
      */
     public function datatablerelation(Request $request)
     {
-        return response()->json((new DataTable(new home, $request, 'detail'))->get());
+        return response()->json((new DataTable(new home, $request, ['homes.*','details.id as detail_id','details.email'], ['details', 'homes.id', '=', 'details.home_id']))->get());
     }
 }
 
@@ -134,19 +134,23 @@ class DataTable
     private $offset;
     private $columnMapping;
     private $isQueryBind;
+    private $join;
 
     /**
      * Constructor
      *
-     * @param class $className
-     * @param request $requestParam
+     * @param object $classObject
+     * @param Request $requestParam
+     * @param array $columns
+     * @param array $join
      */
-    function __construct($className, $requestParam, $alias = '')
+    function __construct($classObject, $requestParam, $columns = [], $join = [])
     {
         $this->requestParam = $requestParam;
-        $this->columnMapping = $className::$dataTableColumnMapping;
+        $this->columnMapping = $classObject::$dataTableColumnMapping;
         $this->isQueryBind = false;
-        $this->query = $className;
+        $this->query = $classObject;
+        $this->join = $join;
         $mapping = array_column($this->columnMapping, 'database');
         $this->order = array_map(function($n) use($mapping) {
             if (array_key_exists($n['column'], $mapping))
@@ -158,10 +162,11 @@ class DataTable
                 return $n;
             }
         }, $this->requestParam->order);        
+        $this->query = $this->query::select(empty($columns) ? $mapping : $columns);
 
-        if(!empty($alias))
+        if(!empty($join)) #for Relational Table
         {
-            $this->columnMapping = $className::$dataTableRelationalColumnMapping;
+            $this->columnMapping = $classObject::$dataTableRelationalColumnMapping;
             $mapping = array_column($this->columnMapping, 'database');
             $this->order = array_map(function($n) use($mapping) {
                 if (array_key_exists($n['column'], $mapping))
@@ -173,14 +178,15 @@ class DataTable
                     return $n;
                 }
             }, $this->requestParam->order);
-            $this->join($alias);
         }
+        
+        $this->join();
         $this->filter();
         $this->order();
         $this->recordsFiltered = $this->query->count();
         $this->limit();  
         $this->recordSet = $this->query->get();
-        $this->recordsTotal = $className::count();
+        $this->recordsTotal = $classObject::count();
     }
     
     /**
@@ -205,61 +211,20 @@ class DataTable
      */
     private function formatOutput()
     {
-        // error_log(print_r($this->recordSet->toArray(), 1));
-        $formattedOutput = [];
-        $dbCol = array_column($this->columnMapping, 'database');
-        foreach($this->recordSet as $k)
-        {
-            $rowTemp = [];
-            foreach($dbCol as $col)
-            {
-                $temp = [];
-                if (!array_key_exists($col, $k->toArray()))
-                {
-                    $arrayFormat = explode(".", $col);
-                    $x = count($arrayFormat) - 1;
-                    for($i = $x; $i >= 0; $i--)
-                    {
-                        $temp = $i == $x ? array($arrayFormat[$i] => '') : array($arrayFormat[$i] => $temp);                        
-                    }
-                    $intersectRow = $this->recursive_array_intersect_key($k->toArray(), $temp);
-                    $filtered = array_filter($intersectRow);
-                    $rowTemp = empty($filtered) ? array_merge_recursive($rowTemp, $temp) : array_replace_recursive($temp, $intersectRow);
-                }
-            }
-            $formattedOutput[] = empty($rowTemp) ? $k->toArray() : array_replace_recursive($k->toArray(), $rowTemp);
-        }
-        return $formattedOutput;
+        return $this->recordSet->toArray();
     }
-
+    
     /**
      * Undocumented function
      *
-     * @param string $alias
-     * @param array $columns
      * @return void
      */
-    private function join($alias)
+    private function join()
     {
-        if ($this->isQueryBind)
+        if(!empty($this->join))
         {
-            // $this->query->with($alias);
-            $this->query->with([$alias => function ($query) {
-                $this->orderRelation($query);
-                // $query->where('title', 'like', '%first%');
-                // $query->orderBy('created_at', 'desc');
-            }]);
-        }
-        else
-        {
-            // $this->query = $this->query->with($alias);
-            $this->query = $this->query->with([$alias => function ($query) {
-                $this->orderRelation($query);
-                // $query->where('title', 'like', '%first%');
-                // $query->orderBy('created_at', 'desc');
-                // $query->orderBy('email', 'desc');
-            }]);
-            $this->isQueryBind = true;
+            list($table, $first, $operator, $second) = $this->join;
+            $this->query->leftJoin($table, $first, $operator, $second);
         }
     }
 
@@ -272,14 +237,7 @@ class DataTable
     {
         $this->offset = isset($this->requestParam->start) ? (int)$this->requestParam->start : 0;
         $this->limit = isset($this->requestParam->length) && $this->requestParam->length != -1 ? (int)$this->requestParam->length : 10;        
-        if ($this->isQueryBind)
-        {
-            $this->query->limit($this->limit)->offset($this->offset);
-        }
-        else
-        {
-            $this->query = $this->query->limit($this->limit)->offset($this->offset);
-        }
+        $this->query->limit($this->limit)->offset($this->offset);
     }
 
     /**
@@ -289,44 +247,12 @@ class DataTable
      */
     private function order()
     {
-        $order = array_filter($this->order, function($e) {
-            # Remove Relational Table column from ordering
-            return count(explode(".", $e['column'])) == 1;
-        });
-        if(!empty($order))
+        if(!empty($this->order))
         {
-            foreach ($order as $k)
+            foreach ($this->order as $k)
             {
-                $orderMode = $k['dir'] == 'asc' ? 'ASC' : 'DESC';
-                if ($this->isQueryBind)
-                {
-                    $this->query->orderBy($k['column'], $orderMode);
-                }
-                else
-                {
-                    $this->query = $this->query->orderBy($k['column'], $orderMode);
-                    $this->isQueryBind = true;
-                }
+                $this->query->orderBy($k['column'], $k['dir'] == 'asc' ? 'ASC' : 'DESC');
             }
-        }
-    }
-
-    private function orderRelation($query)
-    {
-        $order = array_filter($this->order, function($e) {
-            # Return only Relational Table column from ordering
-            return count(explode(".", $e['column'])) > 1;
-        });
-        // error_log(print_r($this->requestParam->order, 1));
-        // error_log(print_r($this->order, 1));
-        foreach ($order as $k)
-        {
-            $col = explode(".", $k['column'])[1];
-            $ord = $k['dir'] == 'asc' ? 'ASC' : 'DESC';
-            $query->orderBy($col, $ord);
-            // error_log(print_r($col, 1));
-            // error_log(print_r($ord, 1));
-            // $query->orderBy('email', 'desc');
         }
     }
 
@@ -341,18 +267,10 @@ class DataTable
         {
             if (($v['searchable'] === true || $v['searchable'] === 'true') && $v['search']['value'] != '')
             {
-                $columntype = array_search($v['data'], array_column($this->columnMapping, 'database'));
+                $columntype = array_search($v['data'], array_column($this->columnMapping, 'datatable'));
                 if ($this->columnMapping[$columntype]['type'] == 'text')
                 {
-                    if ($this->isQueryBind)
-                    {
-                        $this->query->where($v['data'], 'LIKE', '%' . $v['search']['value'] . '%');
-                    }
-                    else
-                    {
-                        $this->query = $this->query::where($v['data'], 'LIKE', '%' . $v['search']['value'] . '%');
-                        $this->isQueryBind = true;
-                    }
+                    $this->query->where($this->columnMapping[$columntype]['database'], 'LIKE', '%' . $v['search']['value'] . '%');
                 }
                 elseif ($this->columnMapping[$columntype]['type'] == 'datetimerange')
                 {
@@ -360,27 +278,9 @@ class DataTable
                     $daterange = array_map('trim', $daterange);
                     $from = date_format(date_create_from_format('d M y H:s', $daterange[0]), 'Y-m-d H:s:00');
                     $to = date_format(date_create_from_format('d M y H:s', $daterange[1]), 'Y-m-d H:s:59');
-                    if ($this->isQueryBind)
-                    {
-                        $this->query->whereBetween($v['data'], [$from, $to]);
-                    }
-                    else
-                    {
-                        $this->query = $this->query::whereBetween($v['data'], [$from, $to]);
-                        $this->isQueryBind = true;
-                    }
+                    $this->query->whereBetween($this->columnMapping[$columntype]['database'], [$from, $to]);
                 }
             }
         }
-    }
-
-    function recursive_array_intersect_key(array $array1, array $array2) {
-        $array1 = array_intersect_key($array1, $array2);
-        foreach ($array1 as $key => &$value) {
-            if (is_array($value) && is_array($array2[$key])) {
-                $value = $this->recursive_array_intersect_key($value, $array2[$key]);
-            }
-        }
-        return $array1;
     }
 }
