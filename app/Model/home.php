@@ -7,26 +7,26 @@ use Illuminate\Database\Eloquent\Model;
 class home extends Model
 {
     static $dataTableColumnMapping = [
-        ['database'=>'id', 'label'=> '#' , 'type'=>'checkbox'],
-        ['database'=>'name', 'label'=> 'Name' , 'type'=>'text'],
-        ['database'=>'address', 'label'=> 'Address' , 'type'=>'text'],
-        ['database'=>'contactno', 'label'=> 'Contact No' , 'type'=>'text'],
-        ['database'=>'annualincome', 'label'=> 'Income' , 'type'=>'text'],
-        ['database'=>'age', 'label'=> 'Age' , 'type'=>'text'],
-        ['database'=>'created_at', 'label'=> 'Created At' , 'type'=>'datetimerange'],
-        ['database'=>'updated_at', 'label'=> 'Updated At' , 'type'=>'datetimerange']
+        ['database'=>'id', 'datatable'=>'id', 'label'=> '#' , 'type'=>'checkbox'],
+        ['database'=>'name', 'datatable'=>'name', 'label'=> 'Name' , 'type'=>'text'],
+        ['database'=>'address', 'datatable'=>'address', 'label'=> 'Address' , 'type'=>'text'],
+        ['database'=>'contactno', 'datatable'=>'contactno', 'label'=> 'Contact No' , 'type'=>'text'],
+        ['database'=>'annualincome', 'datatable'=>'annualincome', 'label'=> 'Income' , 'type'=>'text'],
+        ['database'=>'age', 'datatable'=>'age', 'label'=> 'Age' , 'type'=>'text'],
+        ['database'=>'created_at', 'datatable'=>'created_at', 'label'=> 'Created At' , 'type'=>'datetimerange'],
+        ['database'=>'updated_at', 'datatable'=>'updated_at', 'label'=> 'Updated At' , 'type'=>'datetimerange']
     ];
 
     static $dataTableRelationalColumnMapping = [
-        ['database'=>'id', 'label'=> '#' , 'type'=>'checkbox'],
-        ['database'=>'name', 'label'=> 'Name' , 'type'=>'text'],
-        ['database'=>'address', 'label'=> 'Address' , 'type'=>'text'],
-        ['database'=>'contactno', 'label'=> 'Contact No' , 'type'=>'text'],
-        ['database'=>'detail.email', 'label'=> 'Email', 'type'=>'text'],
-        ['database'=>'annualincome', 'label'=> 'Income' , 'type'=>'text'],
-        ['database'=>'age', 'label'=> 'Age' , 'type'=>'text'],
-        ['database'=>'created_at', 'label'=> 'Created At' , 'type'=>'datetimerange'],
-        ['database'=>'updated_at', 'label'=> 'Updated At' , 'type'=>'datetimerange']
+        ['database'=>'homes.id', 'datatable'=>'id', 'label'=> '#' , 'type'=>'checkbox'],
+        ['database'=>'name', 'datatable'=>'name', 'label'=> 'Name' , 'type'=>'text'],
+        ['database'=>'address', 'datatable'=>'address', 'label'=> 'Address' , 'type'=>'text'],
+        ['database'=>'contactno', 'datatable'=>'contactno', 'label'=> 'Contact No' , 'type'=>'text'],
+        ['database'=>'details.email', 'datatable'=>'email', 'label'=> 'Email', 'type'=>'text'],
+        ['database'=>'annualincome', 'datatable'=>'annualincome', 'label'=> 'Income' , 'type'=>'text'],
+        ['database'=>'age', 'datatable'=>'age', 'label'=> 'Age' , 'type'=>'text'],
+        ['database'=>'homes.created_at', 'datatable'=>'created_at', 'label'=> 'Created At' , 'type'=>'datetimerange'],
+        ['database'=>'homes.updated_at', 'datatable'=>'updated_at', 'label'=> 'Updated At' , 'type'=>'datetimerange']
     ];
 
     public function detail()
