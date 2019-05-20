@@ -121,7 +121,7 @@
                 "url": APP_URL+"/home/datatablerelation"
             },
             "columns": relationalcolumns,
-            "order": [[ name_rel, "asc" ]],
+            "order": [[ income_rel, "desc" ]],
             "columnDefs": [
                 {
                     "targets": id_rel,
